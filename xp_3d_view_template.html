@@ -4,7 +4,9 @@
 <head>
 </head>
 <body>
-
+  <div id="div_instructions">
+  Type a:z / s:x / d:c to move forward:backward in sagital / coronal / axial slices. 
+  </div>  
   <div id="div_viewer">
     <canvas id="3Dviewer"> 
     <img id="sprite" class="hidden" src="data:image/png;base64,$DATA">
@@ -62,7 +64,7 @@
         ctx.drawImage(canvasX,
                 posW*nbSlice.Y, posH*nbSlice.Z, nbSlice.Y, nbSlice.Z,0, (hImg.max-hImg.X)/2, wImg.X, hImg.X );
         ctx.fillStyle = "#ffffff";
-        ctx.fillText("Slice number "+numSlice.X,0,0.05*hImg.max);
+        ctx.fillText("Slice number "+numSlice.X,wImg.X/2,0.05*hImg.max);
         break
       case 'Y':
         // Draw a coronal slice
@@ -81,7 +83,7 @@
         ctx.drawImage(canvasY,
                 0, 0, nbSlice.X, nbSlice.Z, wImg.X, (hImg.max-hImg.Y)/2, wImg.Y, hImg.Y );
         ctx.fillStyle = "#ffffff";
-        ctx.fillText("Slice number "+numSlice.Y,0,0.05*hImg.max);
+        ctx.fillText("Slice number "+numSlice.Y,wImg.X + (wImg.Y/2),0.05*hImg.max);
       case 'Z':
         // Draw a coronal slice
         ctx.fillRect(wImg.X+wImg.Y, 0, wImg.Z, hImg.max);
@@ -102,7 +104,7 @@
         ctx.drawImage(canvasZ,
                 0, 0, nbSlice.X, nbSlice.Y, wImg.X+wImg.Y, (hImg.max-hImg.Z)/2, wImg.Z, hImg.Z );
         ctx.fillStyle = "#ffffff";
-        ctx.fillText("Slice number "+numSlice.Z,0,0.05*hImg.max);
+        ctx.fillText("Slice number "+numSlice.Z,wImg.X + wImg.Y + (wImg.Z/2),0.05*hImg.max);
         
     }
   };
