@@ -15,6 +15,6 @@ str = base64_encode(data);
 text_html = strrep(text_html,'$DATA',str);
 
 %% Write page 
-hf = fopen('xp_3d_view.html','w');
+hf = fopen('index.html','w');
 fprintf(hf,'%s',text_html);
 fclose(hf);
