@@ -8,6 +8,9 @@
   Type a:z / s:x / d:c to move forward:backward in sagital / coronal / axial slices. 
   </div>  
   <div id="div_viewer">
+    <div id="div_loading">
+      Image is loading ...
+    </div>
     <canvas id="3Dviewer"> 
     <img id="sprite" class="hidden" src="data:image/png;base64,$DATA">
   </div>
@@ -155,6 +158,8 @@
   // On load: build all figures   
   $( window ).load(function() {
   
+    // Remove loading message
+    $('#div_loading').html('');
     // Trigger the building of motion movies   
     drawSlice(numSlice.X,'X');
     drawSlice(numSlice.Y,'Y');
