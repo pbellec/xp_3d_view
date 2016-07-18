@@ -6,7 +6,7 @@ fclose(hf);
 
 %% Read png
 %hf = fopen ('test_lowres.png');
-hf = fopen ('test.png');
+hf = fopen ('test.jpg');
 data = fread (hf,Inf,'double');
 fclose(hf);
 
