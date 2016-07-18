@@ -17,7 +17,7 @@
   var ctx = canvas.getContext('2d');
   var imgSprite = document.getElementById('sprite');
   //var nbSlice = {'X':0 , 'Y':47 , 'Z':38 };
-   var nbSlice = {'X':0 , 'Y':233 , 'Z':189 };
+  var nbSlice = {'X':0 , 'Y':233 , 'Z':189 };
   var nw = imgSprite.width/nbSlice.Y; 
   var nh = imgSprite.height/nbSlice.Z;  
   nbSlice.X = nw*nh;
@@ -41,8 +41,8 @@
     numSlice[type] = slice;
     var hImg = {'X':0 , 'Y':0 , 'Z':0 , 'max':0};
     hImg.X = Math.floor(wImg.X * nbSlice.Z / nbSlice.Y );
-    hImg.Y = Math.floor(wImg.Y * nbSlice.X / nbSlice.Z );
-    hImg.Z = Math.floor(wImg.Z * nbSlice.X / nbSlice.Y );
+    hImg.Y = Math.floor(wImg.Y * nbSlice.Z / nbSlice.X );
+    hImg.Z = Math.floor(wImg.Z * nbSlice.Y / nbSlice.X );
     hImg.max = Math.max(hImg.X,hImg.Y,hImg.Z);
     // Set width of the canvas
     if (canvas.width!=(wImg.X+wImg.Y+wImg.Z)) {   
@@ -82,6 +82,27 @@
                 0, 0, nbSlice.X, nbSlice.Z, wImg.X, (hImg.max-hImg.Y)/2, wImg.Y, hImg.Y );
         ctx.fillStyle = "#ffffff";
         ctx.fillText("Slice number "+numSlice.Y,0,0.05*hImg.max);
+      case 'Z':
+        // Draw a coronal slice
+        ctx.fillRect(wImg.X+wImg.Y, 0, wImg.Z, hImg.max);
+        var canvasZ = document.createElement('canvas');
+        var contextZ = canvasZ.getContext('2d');
+        canvasZ.width = nbSlice.X;
+        canvasZ.height = nbSlice.Y;
+        contextZ.rotate(-Math.PI/2);
+        contextZ.translate(-nbSlice.Y,0);
+        for (xx=0; xx<nbSlice.X; xx++) {
+            var posW = (xx%nw);
+            var posH = (xx-posW)/nw;
+            contextZ.drawImage(canvasX, 
+                posW*nbSlice.Y , posH*nbSlice.Z + numSlice.Z, nbSlice.Y, 1, 0, xx, nbSlice.Y, 1 );
+                
+        }
+        div = document.getElementById("div_viewer");
+        ctx.drawImage(canvasZ,
+                0, 0, nbSlice.X, nbSlice.Y, wImg.X+wImg.Y, (hImg.max-hImg.Z)/2, wImg.Z, hImg.Z );
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("Slice number "+numSlice.Z,0,0.05*hImg.max);
         
     }
   };
@@ -117,6 +138,14 @@
       case 120:
         prevSlice('Y'); // x or X
         break
+      case 68:
+      case 100:
+        nextSlice('Z'); // d or D
+        break
+      case 67:
+      case 99:
+        prevSlice('Z'); // c or C
+        break
     };
   };
   window.onkeydown = function(e) { reactKey(e.keyCode) };
@@ -127,6 +156,7 @@
     // Trigger the building of motion movies   
     drawSlice(numSlice.X,'X');
     drawSlice(numSlice.Y,'Y');
+    drawSlice(numSlice.Z,'Z');
     });
   
   </script>
