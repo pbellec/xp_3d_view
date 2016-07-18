@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+<body>
+
+  <div id="div_viewer">
+    <canvas id="3Dviewer"> 
+    <img id="sprite" class="hidden" src="data:image/png;base64,$DATA">
+  </div>
+  <script type="text/javascript" src="assets/jquery/jquery.min.js"></script>       
+  
+  <script> 
+  var canvas = document.getElementById("3Dviewer");
+  var ctx = canvas.getContext('2d');
+  var imgSprite = document.getElementById('sprite');
+  //var nbSlice = {'X':0 , 'Y':47 , 'Z':38 };
+   var nbSlice = {'X':0 , 'Y':233 , 'Z':189 };
+  var nw = imgSprite.width/nbSlice.Y; 
+  var nh = imgSprite.height/nbSlice.Z;  
+  nbSlice.X = nw*nh;
+  var numSlice = {'X':Math.floor(nbSlice.X/2) , 'Y':Math.floor(nbSlice.Y/2) , 'Z':Math.floor(nbSlice.Z/2) };
+  
+  var canvasX = document.createElement('canvas');
+  var contextX = canvasX.getContext('2d');
+  canvasX.width = imgSprite.width;
+  canvasX.height = imgSprite.height;
+  contextX.drawImage(imgSprite, 0, 0 , imgSprite.width,imgSprite.height,0,0,imgSprite.width,imgSprite.height);
+  
+  // function to draw volumes for a particular time frame. 
+  // Update canvas based on two big mosaic files
+  // native: images in native space, prior to motion correction
+  // stereo: images in stereostaxic space, after motion correction
+  function drawSlice(slice,type) {
+    var wImg = {'X':0 , 'Y':0 , 'Z':0 };
+    wImg.X = Math.floor($("#3Dviewer").parent().width()*(nbSlice.Y/(2*nbSlice.X+nbSlice.Y))); 
+    wImg.Y = Math.floor($("#3Dviewer").parent().width()*(nbSlice.X/(2*nbSlice.X+nbSlice.Y))); 
+    wImg.Z = Math.floor($("#3Dviewer").parent().width()*(nbSlice.X/(2*nbSlice.X+nbSlice.Y))); 
+    numSlice[type] = slice;
+    var hImg = {'X':0 , 'Y':0 , 'Z':0 , 'max':0};
+    hImg.X = Math.floor(wImg.X * nbSlice.Z / nbSlice.Y );
+    hImg.Y = Math.floor(wImg.Y * nbSlice.X / nbSlice.Z );
+    hImg.Z = Math.floor(wImg.Z * nbSlice.X / nbSlice.Y );
+    hImg.max = Math.max(hImg.X,hImg.Y,hImg.Z);
+    // Set width of the canvas
+    if (canvas.width!=(wImg.X+wImg.Y+wImg.Z)) {   
+      canvas.width = wImg.X+wImg.Y+wImg.Z;
+      canvas.height = hImg.max;
+    };
+    
+    switch(type) {
+      case 'X':
+        // Draw a sagital slice
+        var posW = ((numSlice.X)%nw);
+        var posH = (numSlice.X-posW)/nw;
+        ctx.clearRect(0, 0, wImg.X, hImg.max);
+        // ctx.drawImage(canvasSprite,
+        //        posW*nbSlice.Y, posH*nbSlice.Z, nbSlice.Y, nbSlice.Z,0, (hImg.max-hImg.X)/2, wImg.X, hImg.X );
+        ctx.drawImage(canvasX,
+                posW*nbSlice.Y, posH*nbSlice.Z, nbSlice.Y, nbSlice.Z,0, (hImg.max-hImg.X)/2, wImg.X, hImg.X );
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("Slice number "+numSlice.X,0,0.05*hImg.max);
+        break
+      case 'Y':
+        // Draw a coronal slice
+        ctx.clearRect(wImg.X, 0, wImg.Y, hImg.max);
+        var canvasY = document.createElement('canvas');
+        var contextY = canvasY.getContext('2d');
+        canvasY.width = nbSlice.X;
+        canvasY.height = nbSlice.Z;
+        for (xx=0; xx<nbSlice.X; xx++) {
+            var posW = (xx%nw);
+            var posH = (xx-posW)/nw;
+            contextY.drawImage(canvasX, 
+                posW*nbSlice.Y + numSlice.Y, posH*nbSlice.Z, 1, nbSlice.Z, xx, 0, 1, nbSlice.Z );
+                
+        }
+        ctx.drawImage(canvasY,
+                0, 0, nbSlice.X, nbSlice.Z, wImg.X, (hImg.max-hImg.Y)/2, wImg.Y, hImg.Y );
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText("Slice number "+numSlice.Y,0,0.05*hImg.max);
+        
+    }
+  };
+    
+  // function to move forward by one slice
+  function nextSlice(type) {
+    numNextSlice = numSlice[type]+1;
+    if (numNextSlice>=nbSlice[type]){return} else { drawSlice (numNextSlice,type)};
+    };
+
+  // Function to move back by one slice
+  function prevSlice(type) {
+    numPrevSlice = numSlice[type] - 1;
+    if (numPrevSlice<0){return} else {drawSlice(numPrevSlice,type)};
+    };
+
+  // Add key bindings, left/right arrow to move backward/forward in time  
+  function reactKey(key){
+    switch(key){
+      case 65:
+      case 97:
+        nextSlice('X'); // a or A
+        break
+      case 90:
+      case 122:
+        prevSlice('X'); // z or Z
+        break
+      case 83:
+      case 115:
+        nextSlice('Y'); // s or S
+        break
+      case 88:
+      case 120:
+        prevSlice('Y'); // x or X
+        break
+    };
+  };
+  window.onkeydown = function(e) { reactKey(e.keyCode) };
+   
+  // On load: build all figures   
+  $( window ).load(function() {
+  
+    // Trigger the building of motion movies   
+    drawSlice(numSlice.X,'X');
+    drawSlice(numSlice.Y,'Y');
+    });
+  
+  </script>
+ 
+</body>
+</html>
