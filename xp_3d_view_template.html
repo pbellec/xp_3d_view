@@ -13,6 +13,7 @@
   
   <script> 
   var canvas = document.getElementById("3Dviewer");
+  var colorBackGround = "black";
   var ctx = canvas.getContext('2d');
   var imgSprite = document.getElementById('sprite');
   //var nbSlice = {'X':0 , 'Y':47 , 'Z':38 };
@@ -48,13 +49,14 @@
       canvas.width = wImg.X+wImg.Y+wImg.Z;
       canvas.height = hImg.max;
     };
-    
+    ctx.fillStyle=colorBackGround;
+  
     switch(type) {
       case 'X':
         // Draw a sagital slice
         var posW = ((numSlice.X)%nw);
         var posH = (numSlice.X-posW)/nw;
-        ctx.clearRect(0, 0, wImg.X, hImg.max);
+        ctx.fillRect(0, 0, wImg.X , hImg.max);
         // ctx.drawImage(canvasSprite,
         //        posW*nbSlice.Y, posH*nbSlice.Z, nbSlice.Y, nbSlice.Z,0, (hImg.max-hImg.X)/2, wImg.X, hImg.X );
         ctx.drawImage(canvasX,
@@ -64,7 +66,7 @@
         break
       case 'Y':
         // Draw a coronal slice
-        ctx.clearRect(wImg.X, 0, wImg.Y, hImg.max);
+        ctx.fillRect(wImg.X, 0, wImg.Y, hImg.max);
         var canvasY = document.createElement('canvas');
         var contextY = canvasY.getContext('2d');
         canvasY.width = nbSlice.X;
