@@ -12,7 +12,7 @@
       Image is loading ...
     </div>
     <canvas id="3Dviewer"> 
-    <img id="sprite" class="hidden" src="data:image/jpg;base64,$DATA">
+    <img id="sprite" class="hidden" src="test.jpg">
   </div>
   <script type="text/javascript" src="assets/jquery/jquery.min.js"></script>       
   
@@ -27,12 +27,6 @@
   var nh = imgSprite.height/nbSlice.Z;  
   nbSlice.X = nw*nh;
   var numSlice = {'X':Math.floor(nbSlice.X/2) , 'Y':Math.floor(nbSlice.Y/2) , 'Z':Math.floor(nbSlice.Z/2) };
-  
-  var canvasX = document.createElement('canvas');
-  var contextX = canvasX.getContext('2d');
-  canvasX.width = imgSprite.width;
-  canvasX.height = imgSprite.height;
-  contextX.drawImage(imgSprite, 0, 0 , imgSprite.width,imgSprite.height,0,0,imgSprite.width,imgSprite.height);
   
   // function to draw volumes for a particular time frame. 
   // Update canvas based on two big mosaic files
@@ -64,7 +58,7 @@
         ctx.fillRect(0, 0, wImg.X , hImg.max);
         // ctx.drawImage(canvasSprite,
         //        posW*nbSlice.Y, posH*nbSlice.Z, nbSlice.Y, nbSlice.Z,0, (hImg.max-hImg.X)/2, wImg.X, hImg.X );
-        ctx.drawImage(canvasX,
+        ctx.drawImage(imgSprite,
                 posW*nbSlice.Y, posH*nbSlice.Z, nbSlice.Y, nbSlice.Z,0, (hImg.max-hImg.X)/2, wImg.X, hImg.X );
         ctx.fillStyle = "#ffffff";
         ctx.fillText("Slice number "+numSlice.X,wImg.X/2,0.05*hImg.max);
@@ -79,7 +73,7 @@
         for (xx=0; xx<nbSlice.X; xx++) {
             var posW = (xx%nw);
             var posH = (xx-posW)/nw;
-            contextY.drawImage(canvasX, 
+            contextY.drawImage(imgSprite, 
                 posW*nbSlice.Y + numSlice.Y, posH*nbSlice.Z, 1, nbSlice.Z, xx, 0, 1, nbSlice.Z );
                 
         }
@@ -99,7 +93,7 @@
         for (xx=0; xx<nbSlice.X; xx++) {
             var posW = (xx%nw);
             var posH = (xx-posW)/nw;
-            contextZ.drawImage(canvasX, 
+            contextZ.drawImage(imgSprite, 
                 posW*nbSlice.Y , posH*nbSlice.Z + numSlice.Z, nbSlice.Y, 1, 0, xx, nbSlice.Y, 1 );
                 
         }
