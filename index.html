@@ -23,6 +23,8 @@
   var imgSprite = document.getElementById('sprite');
   //var nbSlice = {'X':0 , 'Y':47 , 'Z':38 };
   var nbSlice = {'X':0 , 'Y':233 , 'Z':189 };
+  var wImg = {'X':0 , 'Y':0 , 'Z':0 };
+  var hImg = {'X':0 , 'Y':0 , 'Z':0 , 'max':0};
   var nw = imgSprite.width/nbSlice.Y; 
   var nh = imgSprite.height/nbSlice.Z;  
   nbSlice.X = nw*nh;
@@ -33,12 +35,10 @@
   // native: images in native space, prior to motion correction
   // stereo: images in stereostaxic space, after motion correction
   function drawSlice(slice,type) {
-    var wImg = {'X':0 , 'Y':0 , 'Z':0 };
     wImg.X = Math.floor($("#3Dviewer").parent().width()*(nbSlice.Y/(2*nbSlice.X+nbSlice.Y))); 
     wImg.Y = Math.floor($("#3Dviewer").parent().width()*(nbSlice.X/(2*nbSlice.X+nbSlice.Y))); 
     wImg.Z = Math.floor($("#3Dviewer").parent().width()*(nbSlice.X/(2*nbSlice.X+nbSlice.Y))); 
     numSlice[type] = slice;
-    var hImg = {'X':0 , 'Y':0 , 'Z':0 , 'max':0};
     hImg.X = Math.floor(wImg.X * nbSlice.Z / nbSlice.Y );
     hImg.Y = Math.floor(wImg.Y * nbSlice.Z / nbSlice.X );
     hImg.Z = Math.floor(wImg.Z * nbSlice.Y / nbSlice.X );
@@ -147,8 +147,27 @@
         break
     };
   };
+  
+  function clickViewer(e){
+    var xx = e.pageX - canvas.offsetLeft;
+    var yy = e.pageY - canvas.offsetTop;
+    if (xx<wImg.X){
+      drawSlice(Math.round(nbSlice.Y*(xx/wImg.X)),'Y');
+      drawSlice(Math.round(nbSlice.Z*(yy-((hImg.max-hImg.X)/2))/hImg.X),'Z');
+    } else if (xx<(wImg.X+wImg.Y)) {
+      xx = xx-wImg.X;
+      drawSlice(Math.round(nbSlice.X*(xx/wImg.Y)),'X');
+      drawSlice(Math.round(nbSlice.Z*(yy-((hImg.max-hImg.Y)/2))/hImg.Y),'Z');
+    } else {
+      xx = xx-wImg.X-wImg.Y;
+      drawSlice(Math.round(nbSlice.X*(xx/wImg.Z)),'X');
+      drawSlice(Math.round(nbSlice.Y*(1-((yy-((hImg.max-hImg.Z)/2))/hImg.Z))),'Y');
+    }
+  };
+  
   window.onkeydown = function(e) { reactKey(e.keyCode) };
-   
+  canvas.addEventListener('click', function(e) { clickViewer(e)}, false);
+  
   // On load: build all figures   
   $( window ).load(function() {
   
