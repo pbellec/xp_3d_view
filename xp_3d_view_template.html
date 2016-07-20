@@ -14,6 +14,16 @@
     <canvas id="3Dviewer"> 
     <img id="sprite" class="hidden" src="test.jpg">
   </div>
+
+X: <input oninput="moveSliderX(this.value)" min="0" max="203" type="range" value="50" id="sliderx">
+<span id="newdataX">50</span>
+
+Y: <input oninput="moveSliderY(this.value)" min="0" max="232" type="range" value="50" id="slidery">
+<span id="newdataY">50</span>
+
+Z: <input oninput="moveSliderZ(this.value)" min="0" max="188" type="range" value="50" id="sliderz">
+<span id="newdataZ">50</span>
+
   <script type="text/javascript" src="assets/jquery/jquery.min.js"></script>       
   
   <script> 
@@ -29,7 +39,27 @@
   var nh = imgSprite.height/nbSlice.Z;  
   nbSlice.X = nw*nh;
   var numSlice = {'X':Math.floor(nbSlice.X/2) , 'Y':Math.floor(nbSlice.Y/2) , 'Z':Math.floor(nbSlice.Z/2) };
-  
+
+function moveSliderX(newVal) {
+    document.getElementById("newdataX").innerHTML=newVal;
+    document.getElementById("sliderx").value = newVal;
+
+    drawSlice(Math.round(newVal),'X');
+}
+
+function moveSliderY(newVal) {
+    document.getElementById("newdataY").innerHTML=newVal;
+    document.getElementById("slidery").value = newVal;
+
+    drawSlice(Math.round(newVal),'Y');
+}
+
+function moveSliderZ(newVal) {
+    document.getElementById("newdataZ").innerHTML=newVal;
+    document.getElementById("sliderz").value = newVal;
+    drawSlice(Math.round(newVal),'Z');
+}
+
   // function to draw volumes for a particular time frame. 
   // Update canvas based on two big mosaic files
   // native: images in native space, prior to motion correction
@@ -152,16 +182,16 @@
     var xx = e.pageX - canvas.offsetLeft;
     var yy = e.pageY - canvas.offsetTop;
     if (xx<wImg.X){
-      drawSlice(Math.round(nbSlice.Y*(xx/wImg.X)),'Y');
-      drawSlice(Math.round(nbSlice.Z*(yy-((hImg.max-hImg.X)/2))/hImg.X),'Z');
+      moveSliderY(Math.round(nbSlice.Y*(xx/wImg.X)));
+      moveSliderZ(Math.round(nbSlice.Z*(yy-((hImg.max-hImg.X)/2))/hImg.X));
     } else if (xx<(wImg.X+wImg.Y)) {
       xx = xx-wImg.X;
-      drawSlice(Math.round(nbSlice.X*(xx/wImg.Y)),'X');
-      drawSlice(Math.round(nbSlice.Z*(yy-((hImg.max-hImg.Y)/2))/hImg.Y),'Z');
+      moveSliderX(Math.round(nbSlice.X*(xx/wImg.Y)));
+      moveSliderZ(Math.round(nbSlice.Z*(yy-((hImg.max-hImg.Y)/2))/hImg.Y));
     } else {
       xx = xx-wImg.X-wImg.Y;
-      drawSlice(Math.round(nbSlice.X*(xx/wImg.Z)),'X');
-      drawSlice(Math.round(nbSlice.Y*(1-((yy-((hImg.max-hImg.Z)/2))/hImg.Z))),'Y');
+      moveSliderX(Math.round(nbSlice.X*(xx/wImg.Z)));
+      moveSliderY(Math.round(nbSlice.Y*(1-((yy-((hImg.max-hImg.Z)/2))/hImg.Z))));
     }
   };
   
@@ -174,9 +204,9 @@
     // Remove loading message
     $('#div_loading').html('');
     // Trigger the building of motion movies   
-    drawSlice(numSlice.X,'X');
-    drawSlice(numSlice.Y,'Y');
-    drawSlice(numSlice.Z,'Z');
+    moveSliderX(numSlice.X);
+    moveSliderY(numSlice.Z);
+    moveSliderZ(numSlice.Y);
     });
   
   </script>
