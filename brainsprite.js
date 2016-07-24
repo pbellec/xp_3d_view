@@ -73,8 +73,8 @@ function brainsprite(params) {
     switch(type) {
       case 'X':
         // Draw a sagital slice
-        var posW = ((brain.numSlice.X)%brain.nbRow);
-        var posH = (brain.numSlice.X-posW)/brain.nbRow;
+        var posW = ((brain.numSlice.X)%brain.nbCol);
+        var posH = (brain.numSlice.X-posW)/brain.nbCol;
         brain.context.fillRect(0, 0, brain.widthCanvas.X , brain.heightCanvas.max);
         brain.context.drawImage(brain.sprite,
                 posW*brain.nbSlice.Y, posH*brain.nbSlice.Z, brain.nbSlice.Y, brain.nbSlice.Z,0, (brain.heightCanvas.max-brain.heightCanvas.X)/2, brain.widthCanvas.X, brain.heightCanvas.X );
@@ -87,8 +87,8 @@ function brainsprite(params) {
         brain.canvasY.width  = brain.nbSlice.X;
         brain.canvasY.height = brain.nbSlice.Z;
         for (xx=0; xx<brain.nbSlice.X; xx++) {
-            var posW = (xx%brain.nbRow);
-            var posH = (xx-posW)/brain.nbRow;
+            var posW = (xx%brain.nbCol);
+            var posH = (xx-posW)/brain.nbCol;
             brain.contextY.drawImage(brain.sprite, 
                 posW*brain.nbSlice.Y + brain.numSlice.Y, posH*brain.nbSlice.Z, 1, brain.nbSlice.Z, xx, 0, 1, brain.nbSlice.Z );
                 
@@ -99,30 +99,34 @@ function brainsprite(params) {
         // brain.context.fillText("Slice number "+numSlice.Y,wImg.X + (wImg.Y/2),0.05*hImg.max);
       case 'Z':
         // Draw an axial slice
-        ctx.fillRect(wImg.X+wImg.Y, 0, wImg.Z, hImg.max);
-        var canvasZ = document.createElement('canvas');
-        var contextZ = canvasZ.getContext('2d');
-        canvasZ.width = nbSlice.X;
-        canvasZ.height = nbSlice.Y;
-        contextZ.rotate(-Math.PI/2);
-        contextZ.translate(-nbSlice.Y,0);
-        for (xx=0; xx<nbSlice.X; xx++) {
-            var posW = (xx%nw);
-            var posH = (xx-posW)/nw;
-            contextZ.drawImage(imgSprite, 
-                posW*nbSlice.Y , posH*nbSlice.Z + numSlice.Z, nbSlice.Y, 1, 0, xx, nbSlice.Y, 1 );
+        brain.context.fillRect(brain.widthCanvas.X+brain.widthCanvas.Y, 0, brain.widthCanvas.Z, brain.heightCanvas.max);
+        brain.canvasZ.width = brain.nbSlice.X;
+        brain.canvasZ.height = brain.nbSlice.Y;
+        brain.contextZ.rotate(-Math.PI/2);
+        brain.contextZ.translate(-brain.nbSlice.Y,0);
+        for (xx=0; xx<brain.nbSlice.X; xx++) {
+            var posW = (xx%brain.nbCol);
+            var posH = (xx-posW)/brain.nbCol;
+            brain.contextZ.drawImage(brain.sprite, 
+                posW*brain.nbSlice.Y , posH*brain.nbSlice.Z + brain.numSlice.Z, brain.nbSlice.Y, 1, 0, xx, brain.nbSlice.Y, 1 );
                 
         }
-        ctx.drawImage(canvasZ,
-                0, 0, nbSlice.X, nbSlice.Y, wImg.X+wImg.Y, (hImg.max-hImg.Z)/2, wImg.Z, hImg.Z );
-        ctx.fillStyle = "#ffffff";
-        ctx.fillText("Slice number "+numSlice.Z,wImg.X + wImg.Y + (wImg.Z/2),0.05*hImg.max);
+        brain.context.drawImage(brain.canvasZ,
+                0, 0, brain.nbSlice.X, brain.nbSlice.Y, brain.widthCanvas.X+brain.widthCanvas.Y, (brain.heightCanvas.max-brain.heightCanvas.Z)/2, brain.widthCanvas.Z, brain.heightCanvas.Z );
+        brain.context.fillStyle = "#ffffff";
+        brain.context.fillText("Slice number "+brain.numSlice.Z,brain.widthCanvas.X + brain.widthCanvas.Y + (brain.widthCanvas.Z/2),0.05*brain.heightCanvas.max);
         
     }
   };
 
+  // Attach a listener for clicks
+  brain.canvas.addEventListener('click', function(e) { this.clickBrain(e)}, false);
+  
+  // In case of click, update brain slices
+  
   // Draw a X slice for good measure
   brain.draw(brain.numSlice.X,'X')
   brain.draw(brain.numSlice.Y,'Y')
+  brain.draw(brain.numSlice.Z,'Z')
   return brain
 };
