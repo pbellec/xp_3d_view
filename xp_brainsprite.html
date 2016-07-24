@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+<body>
+  <div id="div_instructions">
+  Type a:z / s:x / d:c to move forward:backward in sagital / coronal / axial slices. 
+  </div>  
+  <div id="div_viewer">
+    <div id="div_loading">
+      Image is loading ...
+    </div>
+    <canvas id="3Dviewer"> 
+    <img id="sprite" class="hidden" src="test.jpg">
+  </div>
+
+X: <input oninput="moveSliderX(this.value)" min="0" max="203" type="range" value="50" id="sliderx">
+<span id="newdataX">50</span>
+
+Y: <input oninput="moveSliderY(this.value)" min="0" max="232" type="range" value="50" id="slidery">
+<span id="newdataY">50</span>
+
+Z: <input oninput="moveSliderZ(this.value)" min="0" max="188" type="range" value="50" id="sliderz">
+<span id="newdataZ">50</span>
+
+  <script type="text/javascript" src="assets/jquery/jquery.min.js"></script>       
+  <script type="text/javascript" src="brainsprite.js"></script>       
+  
+  <script> 
+    
+  // On load: build all figures   
+  $( window ).load(function() {
+  
+    // Create brain frames
+    var brain = brainsprite({
+      canvas: "3Dviewer",
+      sprite: "sprite",
+      nbSlice: { 'Y':233 , 'Z':189 }
+    });
+  
+    // Remove loading message
+    $('#div_loading').html('');
+    });
+  
+  </script>
+ 
+</body>
+</html>
